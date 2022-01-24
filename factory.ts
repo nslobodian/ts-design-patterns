@@ -1,4 +1,12 @@
-class Dog {
+interface AbstractDog {
+  say(): void;
+}
+
+interface AbstractDogFactory {
+  create(name: string): AbstractDog;
+}
+
+class Dog implements AbstractDog {
   constructor(private name: string, private age: number) {}
 
   say(): void {
@@ -6,7 +14,7 @@ class Dog {
   }
 }
 
-class DogFactory {
+class DogFactory implements AbstractDogFactory {
   create(name: string) {
     return new Dog(name, 1);
   }
