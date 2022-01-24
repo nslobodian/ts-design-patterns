@@ -1,5 +1,5 @@
 {
   "compilerOptions": {
-    "module": "commonjs"
+    "module": "es2020"
   }
 }
