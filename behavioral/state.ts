@@ -1,8 +1,7 @@
 class EditorialOfficeContext {
-  private state: ArticleState;
-
-  constructor(state: ArticleState) {
-    this.transitionTo(state);
+  constructor(private state: ArticleState) {
+    console.log(`Context: Create with ${(<any>state).constructor.name}`);
+    this.state.setContext(this);
   }
 
   public transitionTo(state: ArticleState) {
@@ -11,8 +10,8 @@ class EditorialOfficeContext {
     this.state.setContext(this);
   }
 
-  action() {
-    this.state.action();
+  getState(): ArticleState {
+    return this.state;
   }
 }
 
@@ -25,37 +24,52 @@ abstract class ArticleState {
     this.context = context;
   }
 
-  abstract action(): void;
+  abstract review(): void;
+  abstract publish(): void;
 }
 
 class DraftState extends ArticleState {
-  action(): void {
+  review(): void {
     this.context.transitionTo(new ReviewState());
-    this.context.action()
+  }
+
+  publish(): void {
+    console.log("Cannot publish in draft stage");
   }
 }
 
 class ReviewState extends ArticleState {
-  action(): void {
+  publish(): void {
     this.context.transitionTo(new PublishState());
-    this.context.action()
+  }
+
+  review(): void {
+    console.log("Article is under review");
   }
 }
 
 class PublishState extends ArticleState {
-  action(): void {
-    this.context.transitionTo(new PublishedState());
-    this.context.action()
+  publish(): void {
+    console.log("Article was published");
   }
-}
 
-class PublishedState extends ArticleState {
-  action(): void {
-    // Nothing
+  review(): void {
+    console.log("Article was reviewed");
   }
 }
 
 (() => {
   const editorContext = new EditorialOfficeContext(new DraftState());
-  editorContext.action();
+
+  // Draft State
+  editorContext.getState().publish();
+  editorContext.getState().review();
+
+  // Review State
+  editorContext.getState().review();
+  editorContext.getState().publish();
+
+  // Publish State
+  editorContext.getState().review();
+  editorContext.getState().publish();
 })();
